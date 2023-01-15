@@ -222,9 +222,9 @@ class AE(torch.nn.Module):
 
       indices = np.random.shuffle(range(11))
 
-      y1 = self.generate_speckle(x[:,:,:,indices[0]],L)
-      y2 = self.generate_speckle(x[:,:,:,indices[1]],np.random.randint(20,30))
-      y = torch.cat((y1,y2),3)
+      y1 = self.generate_speckle(x[:, :, :, indices[0], :],L)
+      y2 = self.generate_speckle(x[:, :, :, indices[1], :],np.random.randint(20,30))
+      y = torch.reshape(torch.cat((y1,y2),3), (x.shape[0],x.shape[1],x.shape[2],2))
 
 
 
@@ -257,11 +257,12 @@ class AE(torch.nn.Module):
       x = batch
       print("input size val",x.shape)
 
-      L=1
+      L=np.random.randint(20,30)
+      indices = np.random.shuffle(range(11))
 
-      y1 = self.generate_speckle(x,L)
-      y2 = self.generate_speckle(x,np.random.randint(20,30))
-      y = torch.cat((y1,y2),3)
+      y1 = self.generate_speckle(x[:, :, :, indices[0], :],1)
+      y2 = self.generate_speckle(x[:, :, :, indices[1], :],L)
+      y = torch.reshape(torch.cat((y1,y2),3), (x.shape[0],x.shape[1],x.shape[2],2))
       y = y.to(self.device)
       out = self.forward(y,self.eval_batch_size)
       print("output size val",out.shape)
@@ -269,6 +270,7 @@ class AE(torch.nn.Module):
       # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
       noisyimage = denormalize_sar(np.asarray(y1.cpu().numpy()))
+      prevdenoisedimage = denormalize_sar(np.asarray(y2.cpu().numpy()))
       outputimage = denormalize_sar(np.asarray(out.cpu().numpy()))
       groundtruth = denormalize_sar(np.asarray(x.cpu().numpy()))
 
@@ -280,7 +282,7 @@ class AE(torch.nn.Module):
       imagename = eval_files[image_num].replace(eval_set, "")
       imagename = imagename.replace('.npy', '_L' + str(L) +'_epoch_' + str(epoch_num) + '.npy')
 
-      save_sar_images(outputimage, noisyimage, imagename,sample_dir)
+      save_sar_images(outputimage, noisyimage, prevdenoisedimage, imagename,sample_dir)
 
 
 
@@ -297,12 +299,12 @@ class AE(torch.nn.Module):
         im_h_start, im_w_start = im.size(dim=1), im.size(dim=2)
 
 
-
-        L = 1
+        indices = np.random.shuffle(range(11))
+        L = np.random.randint(20,30)
         im_gt = denormalize_sar(np.squeeze(np.asarray(im.cpu().numpy())))
-        im1 = self.generate_speckle(im,L)
-        im2 = self.generate_speckle(im,np.random.randint(20,30))
-        im = torch.cat((im1,im2),1)
+        im1 = self.generate_speckle(im[:, :, :, indices[0], :],1)
+        im2 = self.generate_speckle(im[:, :, :, indices[1], :],L)
+        im = torch.reshape(torch.cat((im1,im2),4),(x.shape[0],x.shape[1],x.shape[2],2))
 
 
 

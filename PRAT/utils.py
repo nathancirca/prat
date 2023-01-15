@@ -89,7 +89,7 @@ def store_data_and_plot(im, threshold, filename):
     im.save(filename.replace('npy','png'))
 
 
-def save_sar_images(denoised, noisy, imagename, save_dir, noisy_bool=True, groundtruth=None):
+def save_sar_images(denoised, noisy, prevdenoised, imagename, save_dir, noisy_bool=True, groundtruth=None):
     choices = {'marais1':190.92, 'marais2': 168.49, 'saclay':470.92, 'lely':235.90, 'ramb':167.22,
            'risoul':306.94, 'limagne':178.43, 'saintgervais':560, 'Serreponcon': 450.0,
           'Sendai':600.0, 'Paris': 1291.0, 'Berlin': 1036.0, 'Bergen': 553.71,
@@ -110,6 +110,10 @@ def save_sar_images(denoised, noisy, imagename, save_dir, noisy_bool=True, groun
     denoisedfilename = save_dir + "/denoised_" + imagename
     np.save(denoisedfilename, denoised)
     store_data_and_plot(denoised, threshold, denoisedfilename)
+
+    prevdenoisedfilename = save_dir + "/prevdenoised_" + imagename
+    np.save(prevdenoisedfilename, prevdenoised)
+    store_data_and_plot(prevdenoised, threshold, prevdenoisedfilename)
 
     if noisy_bool:
         noisyfilename = save_dir + "/noisy_" + imagename
