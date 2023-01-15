@@ -1,0 +1,13 @@
+* Lancer un entrainement:
+
+$python main.py
+
+
+* Lancer un test:
+$python main.py --phase test
+
+
+* Pour utiliser Google Colab pour lancer un entrainement, il faut penser aux points suivants:
+     - Mettre la bonne version de tensorflow ! Il faut pour cela dé-installer la version intallée par défaut, et installer la version???. Cette installation peut etre faite en ligne de commande dans le notebook (!pip uninstall -y tensorflow , puis !pip install tensorflow-gpu==1.13.1)
+     - Modifier les PATH pour que les checkpoints, les resultats intermediaires et finaux soient stockes sur le DRIVE: le kernel se desactive au bout d'un certain temps, et toutes les donnees sont perdues si elles sont seulement dans l'environnement.
+     - Il faut donc penser a "mount" son drive avec le colab en cours. Les commandes sont disponibles en ligne.
